@@ -1,0 +1,24 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - yarn --frozen-lockfile
+        - yarn --version
+        - export AWS_BRANCH_THAT_ACTUALLY_EXISTS=$(if [ -z "$AWS_PULL_REQUEST_ID" ]; then echo $AWS_BRANCH; else echo pr-$AWS_PULL_REQUEST_ID; fi)
+        - yarn amplify pipeline-deploy --branch $AWS_BRANCH_THAT_ACTUALLY_EXISTS --app-id $AWS_APP_ID --config-out-dir src
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - yarn --frozen-lockfile
+    build:
+      commands:
+        - yarn build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
