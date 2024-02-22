@@ -1,0 +1,23 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci
+        - export AWS_BRANCH_THAT_ACTUALLY_EXISTS=$(if [ -z "$AWS_PULL_REQUEST_ID" ]; then echo $AWS_BRANCH; else echo pr-$AWS_PULL_REQUEST_ID; fi)
+        - npx amplify pipeline-deploy --branch $AWS_BRANCH_THAT_ACTUALLY_EXISTS --app-id $AWS_APP_ID --config-out-dir src
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
