@@ -4,6 +4,7 @@ backend:
     build:
       commands:
         - yarn --version
+        - corepack enable
         - yarn config set nodeLinker node-modules
         - yarn install --immutable
         - export AWS_BRANCH_THAT_ACTUALLY_EXISTS=$(if [ -z "$AWS_PULL_REQUEST_ID" ]; then echo $AWS_BRANCH; else echo pr-$AWS_PULL_REQUEST_ID; fi)
